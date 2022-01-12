@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <title>Tic Tac Toe</title>
+  </head>
+  <body>
+    <div class="announce"></div>
+    <div class="container">
+      <header>The Odin Project</header>
+      <div class="display">
+        <div class="title">Tic Tac Toe</div>
+        <div class="selector">
+          <label for="play-against"></label>
+          <select name="play-against" id="play-against">
+            <option value="easy">Easy</option>
+            <option value="medium" selected>Medium</option>
+            <option value="impossible">Impossible</option>
+            <option value="friend">Play against a friend</option>
+          </select>
+        </div>
+        <div class="note">Start game or select player</div>
+        <div class="players">
+          <div class="player" id="o">
+            <img src="./images/o-symbol.svg" alt="" />
+            <span class="o-score">-</span>
+          </div>
+          <div class="player" id="x">
+            <img src="./images/x-symbol.svg" alt="" />
+            <span class="x-score">-</span>
+          </div>
+        </div>
+        <div class="turn">
+          <div class="turn-display"></div>
+          <span>Turn</span>
+        </div>
+      </div>
+      <div class="game-board">
+        <table>
+          <tr>
+            <td id="0"></td>
+            <td id="1"></td>
+            <td id="2"></td>
+          </tr>
+          <tr>
+            <td id="3"></td>
+            <td id="4"></td>
+            <td id="5"></td>
+          </tr>
+          <tr>
+            <td id="6"></td>
+            <td id="7"></td>
+            <td id="8"></td>
+          </tr>
+        </table>
+      </div>
+      <button id="restart-btn">Restart</button>
+      <div class="border"></div>
+      <footer>&copy;TheinHein</footer>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
