@@ -1,6 +1,3 @@
-"use strict";
-
-// ************************* ************** ***************** //
 const dom = (() => {
   const select = document.querySelector("select");
   const o = document.querySelector("#o");
@@ -43,6 +40,7 @@ const aiPlayer = (sign) => {
   const move = (board, ai, hu, lvl) => {
     let aiMove;
     let aiInt;
+
     if (finder.findWinner(board, hu)) return;
     else if (finder.findWinner(board, ai)) return;
     else if (finder.findTie(board)) return;
@@ -120,6 +118,8 @@ const ctrl = (() => {
   let ai = {};
   let turn;
   let board = [];
+  let oScore = 0;
+  let xScore = 0;
 
   const init = () => {
     turn = "o";
@@ -149,7 +149,6 @@ const ctrl = (() => {
     display.renderScore(p1);
     display.renderScore(p2);
     display.renderScore(ai);
-    display.renderTurn(turn);
     display.closeAnnounce();
   };
   const pickSign = (e) => {
@@ -164,6 +163,10 @@ const ctrl = (() => {
   const restart = () => {
     display.clearTiles();
     init();
+    oScore = 0;
+    xScore = 0;
+    display.renderScore("o", oScore);
+    display.renderScore("x", xScore);
   };
   const mark = (e) => {
     const index = e.target.id;
@@ -182,21 +185,52 @@ const ctrl = (() => {
       }
       display.renderTurn(turn);
       display.renderTiles(board);
-      if (finder.findWinner(board, p1)) display.renderAnnounce(p1);
-      else if (finder.findWinner(board, p2)) display.renderAnnounce(p2);
-      else if (finder.findTie(board)) display.renderAnnounce("Tie");
+      if (finder.findWinner(board, p1)) {
+        if (p1.sign === "o") oScore = oScore + 1;
+        if (p1.sign === "x") xScore = xScore + 1;
+        display.renderScore("o", oScore);
+        display.renderScore("x", xScore);
+        display.renderWinTiles(finder.findWinner(board, p1).index);
+        display.renderAnnounce(p1);
+      } else if (finder.findWinner(board, p2)) {
+        if (p2.sign === "o") oScore = oScore + 1;
+        if (p2.sign === "x") xScore = xScore + 1;
+        display.renderScore("o", oScore);
+        display.renderScore("x", xScore);
+        display.renderWinTiles(finder.findWinner(board, p2).index);
+        display.renderAnnounce(p2);
+      } else if (finder.findTie(board)) display.renderAnnounce("Tie");
     } else if (lvl !== "friend") {
       if (turn === p1.sign) {
         board[index] = p1.sign;
         turn = ai.sign;
         ai.move(board, ai, p1, lvl);
         turn = p1.sign;
+        display.renderTurn(p1.sign);
+        setTimeout(() => {
+          display.renderTurn(ai.sign);
+        }, 500);
+        setTimeout(() => {
+          display.renderTurn(p1.sign);
+        }, 1200);
       }
-      display.renderTurn(turn);
+      // display.renderTurn(turn);
       display.renderTiles(board, ai);
-      if (finder.findWinner(board, p1)) display.renderAnnounce(p1);
-      else if (finder.findWinner(board, ai)) display.renderAnnounce(ai);
-      else if (finder.findTie(board)) display.renderAnnounce("Tie");
+      if (finder.findWinner(board, p1)) {
+        if (p1.sign === "o") oScore = oScore + 1;
+        if (p1.sign === "x") xScore = xScore + 1;
+        display.renderScore("o", oScore);
+        display.renderScore("x", xScore);
+        display.renderWinTiles(finder.findWinner(board, p1).index);
+        display.renderAnnounce(p1);
+      } else if (finder.findWinner(board, ai)) {
+        if (ai.sign === "o") oScore = oScore + 1;
+        if (ai.sign === "x") xScore = xScore + 1;
+        display.renderScore("o", oScore);
+        display.renderScore("x", xScore);
+        display.renderWinTiles(finder.findWinner(board, ai).index);
+        display.renderAnnounce(ai);
+      } else if (finder.findTie(board)) display.renderAnnounce("Tie");
     }
   };
   return {
@@ -252,6 +286,7 @@ const finder = (() => {
     findTie,
     isGameEnd,
     resetGameEnd,
+    winCond,
   };
 })();
 
@@ -355,9 +390,9 @@ const element = (() => {
 })();
 
 const display = (() => {
-  const renderScore = (player) => {
-    if (player.sign === "o") dom.oScore.textCont12ent = player.score;
-    if (player.sign === "x") dom.xScore.textContent = player.score;
+  const renderScore = (player, score) => {
+    if (player === "o") dom.oScore.textContent = score;
+    if (player === "x") dom.xScore.textContent = score;
   };
   const renderTurn = (turn) => {
     if (dom.turn.firstChild) {
@@ -376,8 +411,22 @@ const display = (() => {
       }
     }
   };
+
+  const renderWinTiles = (index) => {
+    for (let i of finder.winCond[index]) {
+      dom.tiles.forEach((tile) => {
+        if (parseInt(tile.id) === i) {
+          setTimeout(() => {
+            tile.style.setProperty("background-color", "#FF3737");
+          }, 500);
+        }
+      });
+    }
+  };
+
   const clearTiles = () => {
     dom.tiles.forEach((tile) => {
+      tile.style.removeProperty("background-color", "green");
       if (tile.firstChild) tile.removeChild(tile.firstChild);
     });
   };
@@ -408,6 +457,7 @@ const display = (() => {
     renderScore,
     renderTurn,
     renderTiles,
+    renderWinTiles,
     clearTiles,
     renderAnnounce,
     closeAnnounce,
